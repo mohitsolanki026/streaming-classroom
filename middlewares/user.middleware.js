@@ -4,7 +4,7 @@ import { verify } from "../services/jwt.js";
 
 export default async function auth(req, res, next){
   try {
-    if (!req.header.authorization) {
+    if (!req.headers.authorization) {
       return res.status(404).json({ message: "auth Token not found" });
     }
     const token = req.headers.authorization.split(" ")[1];

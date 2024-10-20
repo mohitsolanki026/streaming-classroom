@@ -4,14 +4,14 @@ import { verify } from "../services/jwt.js";
 
 export default async function auth(req, res, next){
   try {
-    if (!req.header.authorization) {
+    if (!req.headers.authorization) {
       return res.status(404).json({ message: "auth Token not found" });
     }
     const token = req.headers.authorization.split(" ")[1];
     if (token) {
       try {
         const decodeData = verify(token);
-        const id = decodeData._id;
+        const id = decodeData.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
           return res.status(404).json({ message: "auth Token inValid" });
         }
@@ -23,6 +23,7 @@ export default async function auth(req, res, next){
         req.role = "teacher";
         next();
       } catch (error) {
+        console.log(error)
         return res.status(401).json({message:"token got expired. login again"});
       }
     } else {

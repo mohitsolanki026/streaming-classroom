@@ -9,5 +9,8 @@ router.post('/create',teacherAuth, meetController.createMeet);
 router.get('/list',userAuth, meetController.getMeets);
 // router.get('/get/:id', meetController.getMeet);
 router.put('/update/:id',teacherAuth, meetController.updateMeet);
+router.post('/teacher/callToken',teacherAuth, meetController.token);
+router.post('/user/callToken',teacherAuth, meetController.token);
+
 
 export default router;

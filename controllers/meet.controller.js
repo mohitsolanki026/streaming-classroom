@@ -1,7 +1,7 @@
 import Client from "./../models/client.model.js";
 import client from "./../models/client.model.js";
 import {sign,verify} from "./../services/jwt.js"
-import CreateCall from "./../services/stream/call.stream.js";
+import CreateCall, { generateCallToken } from "./../services/stream/call.stream.js";
 import Users from "./../models/user.model.js";
 import Class from "../models/class.model.js";
 
@@ -28,8 +28,9 @@ class MeetController {
                 
                 await c.save();
             }
-            res.status(200).json({call});
+            res.status(200).json({callId:call.id});
         } catch (error) {
+            console.log(error);
             res.status(500).json({message: error.message});
         }
     }
@@ -55,6 +56,18 @@ class MeetController {
         }
     }
     
+    async token(req,res){
+        try {
+            const {callId} = req.body;
+            const id = req.user._id;
+            const role = req.role;
+            const token = await generateCallToken(callId,id, role==="teacher"?"admin":"user");
+            res.status(200).json({token});
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({message: error.message});
+        }
+    }
 }
 
 export default new MeetController();
