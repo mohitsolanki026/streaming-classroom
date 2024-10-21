@@ -48,6 +48,46 @@ class MeetController {
      }
     }
 
+    async getUpcomingMeets(req,res){
+        try {
+            const clientId = req.user.clientId;
+
+            const roll = req.roll;
+            //class has courseId and course have clientId so we can get all classes of a client
+            const meets = await Class.aggregate([
+                {
+                    $match: {
+                        schedule: {$gt: new Date()}
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "courses",
+                        localField: "courseId",
+                        foreignField: "_id",
+                        as: "course"
+                    }
+                },
+                {
+                    $unwind: "$course"
+                },
+                {
+                    $match: {
+                        "course.clientId": clientId
+                    }
+                },
+                {
+                    $project: {
+                        "course.clientId": 0
+                    }
+                }
+            ]).exec();
+            res.status(200).json({meets});
+        } catch (error) {
+            res.status(500).json({message: error.message});
+        }
+    }
+
     async updateMeet(req,res){
         try {
             

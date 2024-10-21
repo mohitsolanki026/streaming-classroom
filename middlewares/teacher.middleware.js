@@ -5,7 +5,7 @@ import { verify } from "../services/jwt.js";
 export default async function auth(req, res, next){
   try {
     if (!req.headers.authorization) {
-      return res.status(404).json({ message: "auth Token not found" });
+      return res.status(404).json({ message: "auth Token not found",status:"error" });
     }
     const token = req.headers.authorization.split(" ")[1];
     if (token) {
@@ -13,23 +13,23 @@ export default async function auth(req, res, next){
         const decodeData = verify(token);
         const id = decodeData.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
-          return res.status(404).json({ message: "auth Token inValid" });
+          return res.status(404).json({ message: "auth Token inValid",status:"error" });
         }
         const user = await User.findById(id);
         if (!user) {
-          return res.status(404).json({ message: "auth Token inValid" });
+          return res.status(404).json({ message: "auth Token inValid", status:"error" });
         }
         req.user = user;
         req.role = "teacher";
         next();
       } catch (error) {
         console.log(error)
-        return res.status(401).json({message:"token got expired. login again"});
+        return res.status(401).json({message:"token got expired. login again", status:"error"});
       }
     } else {
-      return res.status(401).json({ message: "Found Unauthorized" });
+      return res.status(401).json({ message: "Found Unauthorized", status:"error" });
     }
   } catch (error) {
-    return res.status(500).json({message:"server error"});
+    return res.status(500).json({message:"server error", status:"error"});
   }
 };

@@ -21,7 +21,7 @@ const courseSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-});
+},{timestamps: true});
 
 const Course = mongoose.model('Course', courseSchema);
 

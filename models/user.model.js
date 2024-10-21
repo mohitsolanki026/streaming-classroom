@@ -22,8 +22,13 @@ const userSchema = new mongoose.Schema({
     clientId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Client',
-    }
-});
+    },
+    courses:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+        default: []
+    }],
+},{timestamps: true});
 
 const User = mongoose.model('User', userSchema);
 

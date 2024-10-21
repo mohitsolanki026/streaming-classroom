@@ -44,7 +44,8 @@ class AuthController {
             const user =  await Users.findOne({email});
             if(!user) return res.status(404).json({message: "User not found"});
             if(user.password !== password) return res.status(401).json({message: "Incorrect password"});
-            const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET, {expiresIn: "30d"});
+            const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET, {expiresIn: "7d"});
+            // const refereshToken = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET, {expiresIn: "30d"});
             res.status(200).json({token, message: "User logged in successfully"});
         }
         catch (error) {

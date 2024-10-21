@@ -11,6 +11,7 @@ router.get('/list',userAuth, meetController.getMeets);
 router.put('/update/:id',teacherAuth, meetController.updateMeet);
 router.post('/teacher/callToken',teacherAuth, meetController.token);
 router.post('/user/callToken',teacherAuth, meetController.token);
+router.get('/upcoming',teacherAuth, meetController.getUpcomingMeets);
 
 
 export default router;
