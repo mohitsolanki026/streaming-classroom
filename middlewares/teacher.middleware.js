@@ -5,6 +5,7 @@ import { verify } from "../services/jwt.js";
 export default async function auth(req, res, next){
   try {
     if (!req.headers.authorization) {
+      console.log("auth token not found");
       return res.status(404).json({ message: "auth Token not found",status:"error" });
     }
     const token = req.headers.authorization.split(" ")[1];
@@ -13,10 +14,12 @@ export default async function auth(req, res, next){
         const decodeData = verify(token);
         const id = decodeData.id;
         if (!mongoose.Types.ObjectId.isValid(id)) {
+          console.log("id not valid");
           return res.status(404).json({ message: "auth Token inValid",status:"error" });
         }
         const user = await User.findById(id);
         if (!user) {
+          console.log("user not found");
           return res.status(404).json({ message: "auth Token inValid", status:"error" });
         }
         req.user = user;
