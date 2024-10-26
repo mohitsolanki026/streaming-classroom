@@ -11,6 +11,10 @@ import { getPreviousMeets, getUpcomingMeets } from "./../services/utils.js";
 class MeetController {
   async createMeet(req, res) {
     try {
+      const user = req.user;
+      if(user.role !== "teacher"){
+       return res.status(400).json({message: "You are not authorized to create a meet"});
+      }
       // callID,callType,host,users
       const callID = crypto.randomUUID();
       const callType = "default";
@@ -40,8 +44,36 @@ class MeetController {
     }
   }
 
+  async getMeetByCourseId(req, res) {
+    try {
+      const courseId = req.params.courseId;
+      const roll = req.roll;
+      const page = req.query.page || 1;
+      const limit = req.query.limit || 10;
+      const type = req.query.type;
+      
+      const user = req.user;
+
+      if(!user.courses.includes(courseId)){
+        res.status(400).json({message: "You are not enrolled in this course"});
+      }
+
+      // i want in reverse order
+      const meets = await Class.find({courses:{ $in: [courseId] }}).sort({schedule: -1}).skip((page - 1) * limit).limit(limit).exec(); 
+
+      res.status(200).json({meets, message: "success", });
+
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async getMeets(req, res) {
     try {
+      const user = req.user;
+      if(user.role !== "teacher"){
+        return  res.status(400).json({message: "You are not authorized to for this operation"});
+      }
       const courseId = req.params.courseId;
       const roll = req.roll;
       const type = req.query.type;

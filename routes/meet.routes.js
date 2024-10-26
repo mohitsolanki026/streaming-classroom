@@ -1,16 +1,15 @@
 import express from 'express';
 import meetController from '../controllers/meet.controller.js';
-import teacherAuth from '../middlewares/teacher.middleware.js';
-import userAuth from '../middlewares/user.middleware.js';
+import auth from '../middlewares/user.middleware.js';
 
 const router = express.Router();
 
-router.post('/create',teacherAuth, meetController.createMeet);
-router.get('/list',teacherAuth, meetController.getMeets);
+router.post('/create',auth, meetController.createMeet);
+router.get('/list/{courseId}',auth, meetController.getMeetByCourseId);
+router.get('/list',auth, meetController.getMeets);
 // router.get('/get/:id', meetController.getMeet);
-router.put('/update/:id',teacherAuth, meetController.updateMeet);
-router.post('/teacher/callToken',teacherAuth, meetController.token);
-router.post('/user/callToken',teacherAuth, meetController.token);
-
+router.put('/update/:id',auth, meetController.updateMeet);
+router.post('/teacher/callToken',auth, meetController.token);
+router.post('/user/callToken',auth, meetController.token);
 
 export default router;

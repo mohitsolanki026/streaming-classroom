@@ -20,6 +20,18 @@ class CourseController {
             res.status(500).json({ message: error.message });
         }
     }
+
+    async getMyCourses(req, res) {
+        try {
+            const user = req.user;
+            console.log("user");
+            const courses = await Course.find({_id: {$in: user.courses}});
+            res.status(200).json({courses});
+        } catch (error) {
+            console.log(error,"ERR");
+            res.status(500).json({ message: error.message });
+        }
+    }
 }
 
 export default new CourseController;
