@@ -59,7 +59,7 @@ class MeetController {
       }
 
       // i want in reverse order
-      const meets = await Class.find({courses:{ $in: [courseId] }}).sort({schedule: -1}).skip((page - 1) * limit).limit(limit).exec(); 
+      const meets = await Class.find({courseId:{ $in: [courseId] }}).sort({schedule: -1}).skip((page - 1) * limit).limit(limit).exec(); 
 
       res.status(200).json({meets, message: "success", });
 
@@ -174,10 +174,11 @@ class MeetController {
       const { callId } = req.body;
       const id = req.user._id;
       const role = req.role;
+      console.log( role);
       const token = await generateCallToken(
         callId,
         id,
-        role === "teacher" ? "admin" : "user"
+        role == "teacher" ? "admin" : "student"
       );
       res.status(200).json({ token });
     } catch (error) {
