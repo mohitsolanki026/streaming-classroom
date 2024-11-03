@@ -10,9 +10,8 @@ export default async function CreateCall(callID, callType, host, users) {
 
     await call.create({
       data: {
-        // participants: users,
         created_by: {
-          id: host, // Add this line
+          id: host, 
           user_id: host,
           role: "host",
           name: "host",
@@ -36,6 +35,9 @@ export default async function CreateCall(callID, callType, host, users) {
           },
           backstage: {
             enabled: true,
+          },
+          access_control: {
+            single_session_per_user: true,
           }
         },
       },
@@ -55,6 +57,12 @@ export async function generateCallToken(callID, userID, role) {
 
     const validity_in_seconds = 60 * 60;
 
+    const user = await checkUserInCall(callID, userID);
+    if (user.members.length > 0) {
+      console.log("User already in call",user);
+      await removeUserFromCall(callID, userID);
+    }
+
     const call_cids = [callID];
     const token = client.createCallToken({
       user_id: userID,
@@ -63,8 +71,92 @@ export async function generateCallToken(callID, userID, role) {
       role,
     });
 
+    await addUserToCall(callID, userID, role);
+
     return token;
   } catch (error) {
     console.log(error, "error");
   }
 }
+
+
+async function checkUserInCall(callID, userID) {
+  try {
+    const apiKey = process.env.STREAM_APIKEY;
+    const apiSecret = process.env.STREAM_SECRET;
+    const client = new StreamClient(apiKey, apiSecret);
+
+    const call = client.video.call("default", callID);
+
+    const participants = await call.queryMembers({filter_conditions: {user_id: {$eq: userID}}});
+    console.log(participants, "participants");
+
+    // const user = participants.find((participant) => participant.user_id === userID);
+
+    return participants;
+  }
+  catch (error) {
+    console.log(error, "error");
+  }
+}
+
+async function removeUserFromCall(callID, userID) {
+  try {
+    const apiKey = process.env.STREAM_APIKEY;
+    const apiSecret = process.env.STREAM_SECRET;
+    const client = new StreamClient(apiKey, apiSecret);
+
+    const call = client.video.call("default", callID);
+
+    await call.updateCallMembers({
+      remove_members: [userID],
+    });
+
+    console.log("User removed from call");
+
+    return true;
+  } catch (error) {
+    console.log(error, "error");
+  }
+}
+
+export async function addUserToCall(callID, userID, role) {
+  try {
+    const apiKey = process.env.STREAM_APIKEY;
+    const apiSecret = process.env.STREAM_SECRET;
+    const client = new StreamClient(apiKey, apiSecret);
+    console.log(callID, userID, role, "addUserToCall");
+    const call = client.video.call("default",callID);
+    // console.log(call, "call");
+    const user = await call.updateCallMembers({
+      update_members: [
+        {
+          user_id: userID,
+          role,
+          name: "user",
+        },
+      ],
+    });
+
+    return user;
+  } catch (error) {
+    console.log(error, "error");
+  }
+}
+
+export async function endCall(callID) {
+  try {
+    const apiKey = process.env.STREAM_APIKEY;
+    const apiSecret = process.env.STREAM_SECRET;
+    const client = new StreamClient(apiKey, apiSecret);
+
+    const call = client.video.call(callID);
+
+    await call.end();
+
+    return true;
+  } catch (error) {
+    console.log(error, "error");
+  }
+}
+
