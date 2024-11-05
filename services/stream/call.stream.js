@@ -91,8 +91,6 @@ async function checkUserInCall(callID, userID) {
     const participants = await call.queryMembers({filter_conditions: {user_id: {$eq: userID}}});
     console.log(participants, "participants");
 
-    // const user = participants.find((participant) => participant.user_id === userID);
-
     return participants;
   }
   catch (error) {
