@@ -13,6 +13,10 @@ const courseSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    discount:{
+        type: Number,
+        required: true
+    },
     clientId :{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Client',

@@ -38,18 +38,27 @@ class CourseController {
         try {
             const user = req.user;
             const course = req.body;
-
+    
             const { error } = createCourseValidation.validate(course);
-
             if (error) {
                 return res.status(400).json({ message: error.details[0].message });
             }
             course.clientId = user.clientId;
+    
+            // Handle file uploads
+            course.generalLinks = [];
+            for (let i = 0; i < req.files.length; i++) {
+                // Convert files to base64 (or save to S3 and use the URL instead)
+                course.generalLinks.push(req.files[i].buffer.toString('base64'));
+            }
+    
+            // Save the course
             const newCourse = new Course(course);
             await newCourse.save();
+    
             res.status(201).json(newCourse);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             res.status(500).json({ message: error.message });
         }
     }
