@@ -3,7 +3,7 @@ import auth from "../middlewares/user.middleware.js"
 import controller from "../controllers/course.Controller.js"
 import multer from "multer"
 const router = express.Router()
-const storage = multer.memoryStorage(); // Files are stored in memory as buffers
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.get("/all", auth, controller.getCourses)
