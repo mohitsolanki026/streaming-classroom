@@ -4,7 +4,15 @@ import { createCourseValidation } from "../validations/course.validations.js";
 class CourseController {
     async getCourse(req, res) {
         try {
-            const course = await Course.findById(req.params.id);
+            var course = await Course.findById(req.params.id);
+            if (!course) {
+                return res.status(404).json({ message: "Course not found" });
+            }
+            const isPurchased = req.user.courses.includes(course._id);
+            
+            course = course.toObject();
+            course.isPurchased = isPurchased;
+
             res.status(200).json(course);
         } catch (error) {
             res.status(500).json({ message: error.message });
