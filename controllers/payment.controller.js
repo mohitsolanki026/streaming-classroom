@@ -28,8 +28,8 @@ class PaymentController {
         merchantUserId: "MUID",
         name: "name",
         amount: 10000,
-        redirectUrl: `${process.env.FRONTEND_URL}/payment/status/${merchantTransactionId}`,
-        redirectMode: "POST",
+        redirectUrl: `${process.env.BACKEND_URL}/api/payment/status/${merchantTransactionId}`,
+        redirectMode: "GET",
         mobileNumber: 9999999999,
         paymentInstrument: {
           type: "PAY_PAGE",
@@ -60,9 +60,8 @@ class PaymentController {
       axios
         .request(options)
         .then(function (response) {
-          return res.send({
-            url: response.data.data.instrumentResponse.redirectInfo.url,
-          });
+          // redirect to the payment page
+          return res.redirect(response.data.data.instrumentResponse.redirectInfo.url)
         })
         .catch(function (error) {
           console.error(error);
@@ -100,13 +99,9 @@ class PaymentController {
       .then(async (response) => {
         if (response.data.success === true) {
           console.log(response.data);
-          return res
-            .status(200)
-            .send({ success: true, message: "Payment Success" });
+          return res.redirect(`${process.env.FRONTEND_URL}/payment/success`);
         } else {
-          return res
-            .status(400)
-            .send({ success: false, message: "Payment Failure" });
+          return res.redirect(`${process.env.FRONTEND_URL}/payment/fail`);
         }
       })
       .catch((err) => {

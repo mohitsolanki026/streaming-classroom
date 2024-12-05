@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
-    origin: ['http://localhost:5173','http://localhost:5174'],
+    origin: '*',
     credentials: true
 }));
 app.use(morgan('dev'));
