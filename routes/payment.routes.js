@@ -5,6 +5,6 @@ import authMiddleware from '../middlewares/user.middleware.js';
 const router = express.Router();
 
 router.post('/create-payment-intent', authMiddleware, PaymentController.newPayment);
-router.get('/status/:txnId', PaymentController.checkStatus);
+router.post('/status/:txnId', PaymentController.checkStatus);
 
 export default router;
