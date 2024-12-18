@@ -22,17 +22,17 @@ export default async function CreateCall(callID, callType, host, users) {
             mic_default_on: false,
             default_device: "earpiece",
           },
-          video: {
-            camera_default_on: false,
-            target_resolution: {
-              width: 240,
-              height: 240,
-            },
-            camera_default_on: false,
-          },
-          screensharing: {
-            enabled: false,
-          },
+          // video: {
+          //   // camera_default_on: false,
+          //   target_resolution: {
+          //     width: 240,
+          //     height: 240,
+          //   },
+          //   // camera_default_on: false,
+          // },
+          // screensharing: {
+          //   // enabled: false,
+          // },
           backstage: {
             enabled: true,
           },
