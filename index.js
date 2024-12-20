@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
-    origin: ['http://localhost:5173','http://localhost:5174'],
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL2, 'https://mercury-uat.phonepe.com'],
     credentials: true
 }));
 app.use(morgan('dev'));
